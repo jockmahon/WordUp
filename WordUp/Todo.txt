@@ -1,0 +1,15 @@
+1) move load words to new thread 
+2) read content providers
+3) move delete words to new thread
+4) If cp doesnt exist then on first load the words arnt been saved
+
+
+
+
+
+
+
+
+done
+read fragments
+read loaders
