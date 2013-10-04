@@ -1,10 +1,17 @@
 package com.jock.wordup;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
@@ -26,27 +33,71 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 	private static final String SQL_DESTROY_TABLE = "DROP TABLE '" + TABLE_WORDS + "'";
 	public static final String SQL_ROW_COUNT = "SELECT count(*) from " + TABLE_WORDS + ";";
 
+	private final Resources resources;
 
 	public WordUpSQLiteOpenHelper(Context context, String name, CursorFactory factory, int version)
 	{
 		super( context, name, factory, version );
+		Log.d( WordUpMain.APP_TAG, "Calling WordUpSQLiteOpenHelper constructor." );
+		
+		resources =  context.getResources();
 	}
 
 
 	@Override
 	public void onCreate( SQLiteDatabase db )
 	{
+		Log.d( WordUpMain.APP_TAG, "Creating " + TABLE_WORDS );
 		db.execSQL( SQL_CREATE_DATA_BASE );
 		// loadWords();
+
+		InputStream inputStream = resources.openRawResource( R.raw.words );
+		BufferedReader reader = new BufferedReader( new InputStreamReader( inputStream ) );
+
+		try
+		{
+			String line;
+			while (( line = reader.readLine() ) != null)
+			{
+				String[] strings = TextUtils.split( line, "\t" );
+				if( strings.length < 2 ) continue;
+
+				Log.d( WordUpMain.APP_TAG, "Adding " + strings[0].trim() );
+				
+				ContentValues cv = new ContentValues();
+				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD,strings[0].trim() );
+				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_DEF, strings[1].trim() );
+				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT, 0 );
+				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT, 0 );
+
+				db.insert( TABLE_WORDS, null, cv );
+			}
+		}
+		catch (IOException e)
+		{
+			Log.d( WordUpMain.APP_TAG, "Moose, error occured" );
+		}
+		finally
+		{
+			try
+			{
+				reader.close();
+			}
+			catch (IOException e)
+			{
+				Log.d( WordUpMain.APP_TAG, "Moose 2, error occured" );
+			}
+		}		
+		
 	}
 
 
 	@Override
 	public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
 	{
-		Log.d( WordUpMain.APP_TAG, "Updating the database." );
-		Log.d( WordUpMain.APP_TAG, "Old verson :" + oldVersion );
-		Log.d( WordUpMain.APP_TAG, "New verson :" + newVersion );
+		Log.d( WordUpMain.APP_TAG, "Updating " + TABLE_WORDS );
+		Log.d( WordUpMain.APP_TAG, TABLE_WORDS+ " current verson :" + oldVersion );
+		Log.d( WordUpMain.APP_TAG, TABLE_WORDS+ " new verson :" + newVersion );
 
 		db.execSQL( SQL_DESTROY_TABLE );
 

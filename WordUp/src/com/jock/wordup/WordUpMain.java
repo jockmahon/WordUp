@@ -1,30 +1,25 @@
 package com.jock.wordup;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 public class WordUpMain extends Activity implements LoaderCallbacks<Cursor>
 {
-
+	private ListView lv_words;
 	public static final String APP_TAG = "WORD_UP";
 	private String[] columnList;
 	private ContentResolver cr;
+	private SimpleCursorAdapter mWordAdapter;
 
 
 	@Override
@@ -36,6 +31,14 @@ public class WordUpMain extends Activity implements LoaderCallbacks<Cursor>
 		columnList = new String[] { WordUpSQLiteOpenHelper.COLUMN_WORD_ID, WordUpSQLiteOpenHelper.COLUMN_WORD, WordUpSQLiteOpenHelper.COLUMN_WORD_DEF };
 
 		getLoaderManager().initLoader( 0, null, this );
+
+		String[] fromColumns = { WordUpSQLiteOpenHelper.COLUMN_WORD, WordUpSQLiteOpenHelper.COLUMN_WORD_DEF, WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT, WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT };
+		int[] toViews = { R.id.tv_list_word, R.id.tv_list_def, R.id.tv_list_word_correct_cnt,R.id.tv_list_word_incorrect_cnt };
+
+		lv_words = (ListView) findViewById( R.id.wordsListView );
+
+		mWordAdapter = new SimpleCursorAdapter( this, R.layout.list_item_card_layout, null, fromColumns, toViews, 0 );
+		lv_words.setAdapter( mWordAdapter );
 
 		cr = getContentResolver();
 
@@ -62,54 +65,9 @@ public class WordUpMain extends Activity implements LoaderCallbacks<Cursor>
 	@Override
 	public void onLoadFinished( Loader<Cursor> loader, Cursor cursor )
 	{
-		Log.i( APP_TAG, String.valueOf( cursor.getCount() ) );
-		// cursorAdapter.swapCursor( cursor );
+		Log.i( APP_TAG, "onLoadFinished, word cnt : " + String.valueOf( cursor.getCount() ) );
+		mWordAdapter.swapCursor( cursor );
 
-		if( cursor.getCount() == 0 )
-		{
-			final Resources resources = getResources();
-			InputStream inputStream = resources.openRawResource( R.raw.words );
-			BufferedReader reader = new BufferedReader( new InputStreamReader( inputStream ) );
-
-			try
-			{
-				String line;
-				while (( line = reader.readLine() ) != null)
-				{
-					String[] strings = TextUtils.split( line, "\t" );
-					if( strings.length < 2 ) continue;
-
-					Bundle bundle = new Bundle();
-					bundle.putSerializable( "word", strings[0].trim() );
-					bundle.putSerializable( "def", strings[1].trim() );
-					cr.call( WordUpContentProvider.CONTENT_URI, "addWord", null, bundle );
-
-					// ContentValues initialValues = new ContentValues();
-					// initialValues.put( WordUpSQLiteOpenHelper.COLUMN_WORD, strings[0].trim() );
-					// initialValues.put( WordUpSQLiteOpenHelper.COLUMN_WORD_DEF, strings[1].trim() );
-					// cr.insert( WordUpContentProvider.CONTENT_URI, initialValues );
-				}
-			}
-			catch (IOException e)
-			{
-				Log.d( APP_TAG, "Moose, error occured" );
-			}
-			finally
-			{
-				try
-				{
-					reader.close();
-				}
-				catch (IOException e)
-				{
-					Log.d( APP_TAG, "Moose 2, error occured" );
-				}
-			}
-		}
-		else
-		{
-			Log.d( APP_TAG, "Words Exist already" );
-		}
 	}
 
 
@@ -124,11 +82,11 @@ public class WordUpMain extends Activity implements LoaderCallbacks<Cursor>
 	{
 		switch (mi.getItemId())
 		{
-			case R.id.mi_delete_all:
-				deleteAllWords();
-				return true;
-			default:
-				return false;
+		case R.id.mi_delete_all:
+			deleteAllWords();
+			return true;
+		default:
+			return false;
 		}
 	}
 
@@ -136,5 +94,7 @@ public class WordUpMain extends Activity implements LoaderCallbacks<Cursor>
 	private void deleteAllWords()
 	{
 		cr.delete( WordUpContentProvider.CONTENT_URI, null, null );
+		// mWordAdapter.swapCursor( cr.query( WordUpContentProvider.CONTENT_URI,
+		// columnList, null, null, null ) );
 	}
 }
