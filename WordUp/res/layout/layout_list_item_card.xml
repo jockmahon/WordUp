@@ -22,7 +22,7 @@
             android:paddingRight="0dp"
             android:paddingTop="5dp"
             android:text=""
-            android:textColor="#44FF44"
+            android:textColor="#339900"
             android:textSize="20sp"
             android:textStyle="bold" />
 

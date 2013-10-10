@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText
+        android:id="@+id/et_wordAttempt"
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_spell_word"
+        android:inputType="textNoSuggestions" 
+        android:textSize="26sp"/>
+
+    <ImageButton
+        android:id="@+id/btn_repeatWord"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="fitXY" 
+        android:layout_toRightOf="@id/et_wordAttempt"
+        android:contentDescription="@string/repeat"
+        android:src="@drawable/ic_action_volume_on" />
+
+    <Button
+        android:id="@+id/btn_submitWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/btn_repeatWord"
+        android:text="@string/submit" />
+
+    <Button
+        android:id="@+id/btn_nextWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/btn_submitWord"
+        android:text="@string/next_word" />
+
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_nextWord"
+        android:text="" />
+<!--
+    <CheckBox
+        android:id="@+id/cb_showWordDef"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_result"
+        android:text="@string/show_word_def" />
+-->
+    <TextView
+        android:id="@+id/tv_word_def"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_result"
+        android:paddingLeft="10dp"
+        android:text=""
+        android:textSize="20sp" />
+
+</RelativeLayout>

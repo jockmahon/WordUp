@@ -25,10 +25,11 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 	public static final String COLUMN_WORD_DEF = "word_def";
 	public static final String COLUMN_WORD_CORRECTLY_SPLET_CNT = "correct_word_cnt";
 	public static final String COLUMN_WORD_INCORRECTLY_SPLET_CNT = "incorrect_word_cnt";
+	public static final String COLUMN_WORD_TOTAL_SPLET_CNT = "total_word_cnt";
 
 	private static final String SQL_CREATE_DATA_BASE = "create table " + TABLE_WORDS + " ( " + COLUMN_WORD_ID + " integer primary key autoincrement,"
 			+ COLUMN_WORD + " text not null, " + COLUMN_WORD_DEF + " text, " + COLUMN_WORD_CORRECTLY_SPLET_CNT + " integer, "
-			+ COLUMN_WORD_INCORRECTLY_SPLET_CNT + " integer); ";
+			+ COLUMN_WORD_INCORRECTLY_SPLET_CNT + " integer," + COLUMN_WORD_TOTAL_SPLET_CNT + " integer ); ";
 
 	private static final String SQL_DESTROY_TABLE = "DROP TABLE '" + TABLE_WORDS + "'";
 	public static final String SQL_ROW_COUNT = "SELECT count(*) from " + TABLE_WORDS + ";";
@@ -69,6 +70,7 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_DEF, strings[1].trim() );
 				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT, 0 );
 				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT, 0 );
+				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_TOTAL_SPLET_CNT, 0 );
 
 				db.insert( TABLE_WORDS, null, cv );
 			}

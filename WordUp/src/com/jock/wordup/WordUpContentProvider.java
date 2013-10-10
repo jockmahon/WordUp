@@ -18,7 +18,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class WordUpContentProvider extends ContentProvider implements Runnable
+public class WordUpContentProvider extends ContentProvider 
 {
 	public static final Uri CONTENT_URI = Uri.parse( "content://com.jock.wordupcontentprovider/words" );
 
@@ -50,67 +50,6 @@ public class WordUpContentProvider extends ContentProvider implements Runnable
 	}
 
 
-	public void run()
-	{
-		try
-		{
-			loadWordsFromFile();
-
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException();
-		}
-	}
-
-
-	public void loadWords()
-	{
-		new Thread( this ).start();
-	}
-
-
-	private void loadWordsFromFile() throws IOException
-	{
-		final Resources resources = getContext().getResources();
-		InputStream inputStream = resources.openRawResource( R.raw.words );
-		BufferedReader reader = new BufferedReader( new InputStreamReader( inputStream ) );
-
-		try
-		{
-			String line;
-			while (( line = reader.readLine() ) != null)
-			{
-				String[] strings = TextUtils.split( line, "\t" );
-				if( strings.length < 2 ) continue;
-				long id = addWord( strings[0].trim(), strings[1].trim() );
-				if( id < 0 )
-				{
-
-				}
-			}
-		}
-		finally
-		{
-			reader.close();
-		}
-
-	}
-
-
-	public long addWord( String word, String definition )
-	{
-		Log.d( WordUpMain.APP_TAG, "Adding word : " +word );
-
-		SQLiteDatabase db = mWordUpSQLiteOpenHelper.getWritableDatabase();
-		ContentValues initialValues = new ContentValues();
-		initialValues.put( WordUpSQLiteOpenHelper.COLUMN_WORD, word );
-		initialValues.put( WordUpSQLiteOpenHelper.COLUMN_WORD_DEF, definition );
-
-		return db.insert( WordUpSQLiteOpenHelper.TABLE_WORDS, null, initialValues );
-	}
-
-
 	@Override
 	public int delete( Uri uri, String selection, String[] selectionArgs )
 	{
@@ -118,11 +57,12 @@ public class WordUpContentProvider extends ContentProvider implements Runnable
 
 		switch (uriMatcher.match( uri ))
 		{
-		case SINGLE_ROW:
-			String rowID = uri.getPathSegments().get( 1 );
-			selection = WordUpSQLiteOpenHelper.COLUMN_WORD_ID + " = " + rowID + ( !TextUtils.isEmpty( selection ) ? " AND (" + selection + ")" : "" );
-		default:
-			break;
+			case SINGLE_ROW:
+				String rowID = uri.getPathSegments().get( 1 );
+				selection = WordUpSQLiteOpenHelper.COLUMN_WORD_ID + " = " + rowID
+						+ ( !TextUtils.isEmpty( selection ) ? " AND (" + selection + ")" : "" );
+			default:
+				break;
 		}
 
 		if( selection == null )
@@ -132,8 +72,8 @@ public class WordUpContentProvider extends ContentProvider implements Runnable
 
 		int deleteCount = db.delete( WordUpSQLiteOpenHelper.TABLE_WORDS, selection, selectionArgs );
 
-		Log.i( WordUpMain.APP_TAG, deleteCount +" deleted");
-		
+		Log.i( WordUpMain.APP_TAG, deleteCount + " deleted" );
+
 		getContext().getContentResolver().notifyChange( uri, null );
 
 		return deleteCount;
@@ -144,6 +84,8 @@ public class WordUpContentProvider extends ContentProvider implements Runnable
 	public Uri insert( Uri uri, ContentValues cv )
 	{
 		SQLiteDatabase db = mWordUpSQLiteOpenHelper.getWritableDatabase();
+
+		Log.i( WordUpMain.APP_TAG, "on row insert" );
 
 		long id = db.insert( WordUpSQLiteOpenHelper.TABLE_WORDS, null, cv );
 
@@ -169,7 +111,7 @@ public class WordUpContentProvider extends ContentProvider implements Runnable
 		int updateCount = 0;
 		updateCount = db.update( WordUpSQLiteOpenHelper.TABLE_WORDS, cv, selection, selectionArgs );
 
-		Log.i( WordUpMain.APP_TAG, "on row update, " + String.valueOf( updateCount ) + " row changed");
+		Log.i( WordUpMain.APP_TAG, "on row update, " + String.valueOf( updateCount ) + " row changed" );
 
 		getContext().getContentResolver().notifyChange( uri, null );
 
@@ -187,11 +129,11 @@ public class WordUpContentProvider extends ContentProvider implements Runnable
 
 		switch (uriMatcher.match( uri ))
 		{
-		case SINGLE_ROW:
-			String rowID = uri.getPathSegments().get( 1 );
-			builder.appendWhere( WordUpSQLiteOpenHelper.COLUMN_WORD_ID + " = " + rowID );
-		default:
-			break;
+			case SINGLE_ROW:
+				String rowID = uri.getPathSegments().get( 1 );
+				builder.appendWhere( WordUpSQLiteOpenHelper.COLUMN_WORD_ID + " = " + rowID );
+			default:
+				break;
 		}
 
 		Cursor cursor = builder.query( db, projection, selection, selectionArgs, null, null, sortOrder );
@@ -204,25 +146,14 @@ public class WordUpContentProvider extends ContentProvider implements Runnable
 	{
 		switch (uriMatcher.match( uri ))
 		{
-		case ALL_ROWS:
-			return "vnd.android.cursor.dir/vnd.example.words";
-		case SINGLE_ROW:
-			return "vnd.android.cursor.item/vnd.example.words";
-		default:
-			throw new IllegalArgumentException( "unsupported URI : " + uri );
+			case ALL_ROWS:
+				return "vnd.android.cursor.dir/vnd.example.words";
+			case SINGLE_ROW:
+				return "vnd.android.cursor.item/vnd.example.words";
+			default:
+				throw new IllegalArgumentException( "unsupported URI : " + uri );
 
 		}
 	}
 
-
-	@Override
-	public Bundle call( String method, String arg, Bundle extras )
-	{
-		if( method.equals( "addWord" ) )
-		{
-			addWord( extras.getString( "word" ), extras.getString( "def" ) );
-		}
-
-		return new Bundle();
-	}
 }

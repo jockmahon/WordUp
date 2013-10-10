@@ -1,9 +1,11 @@
-1) move load words to new thread 
-2) read content providers
-3) move delete words to new thread
-4) If cp doesnt exist then on first load the words arnt been saved
-
-
+add drawer navigation, maybe a,b,c or dorop down also show untested only known or unknown
+uppercase the first letter of the word
+show loading of words
+make widget
+move load words to new thread 
+move delete words to new thread
+on submit move to next word if correct else show dialog showing correct word 
+change to fragments, will need to do this before drawer
 
 
 
@@ -11,5 +13,11 @@
 
 
 done
+add word of the day at top
+in test dont use words that have already been tested
+change speak icon, improved
+update the counts when you go back from a test, on update maybe call notifyALl
+update the green colour to be darker
 read fragments
 read loaders
+on load if words already exist then dont load them
