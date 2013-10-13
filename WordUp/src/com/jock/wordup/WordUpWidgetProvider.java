@@ -19,7 +19,7 @@ public class WordUpWidgetProvider extends AppWidgetProvider
 		{
 			int appWidgetId = appWidgetIds[i];
 
-			Intent intent = new Intent( context, WordUpMain.class );
+			Intent intent = new Intent( context, Main.class );
 			PendingIntent pendingIntent = PendingIntent.getActivity( context, 0, intent, 0 );
 
 			RemoteViews views = new RemoteViews( context.getPackageName(), R.layout.layout_widget );

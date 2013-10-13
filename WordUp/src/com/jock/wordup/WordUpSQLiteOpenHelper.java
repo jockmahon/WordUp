@@ -39,7 +39,7 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 	public WordUpSQLiteOpenHelper(Context context, String name, CursorFactory factory, int version)
 	{
 		super( context, name, factory, version );
-		Log.d( WordUpMain.APP_TAG, "Calling WordUpSQLiteOpenHelper constructor." );
+		Log.d( Main.APP_TAG, "Calling WordUpSQLiteOpenHelper constructor." );
 		
 		resources =  context.getResources();
 	}
@@ -48,7 +48,7 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 	@Override
 	public void onCreate( SQLiteDatabase db )
 	{
-		Log.d( WordUpMain.APP_TAG, "Creating " + TABLE_WORDS );
+		Log.d( Main.APP_TAG, "Creating " + TABLE_WORDS );
 		db.execSQL( SQL_CREATE_DATA_BASE );
 		// loadWords();
 
@@ -63,7 +63,7 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 				String[] strings = TextUtils.split( line, "\t" );
 				if( strings.length < 2 ) continue;
 
-				Log.d( WordUpMain.APP_TAG, "Adding " + strings[0].trim() );
+				Log.d( Main.APP_TAG, "Adding " + strings[0].trim() );
 				
 				ContentValues cv = new ContentValues();
 				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD,strings[0].trim() );
@@ -77,7 +77,7 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 		}
 		catch (IOException e)
 		{
-			Log.d( WordUpMain.APP_TAG, "Moose, error occured" );
+			Log.d( Main.APP_TAG, "Moose, error occured" );
 		}
 		finally
 		{
@@ -87,7 +87,7 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 			}
 			catch (IOException e)
 			{
-				Log.d( WordUpMain.APP_TAG, "Moose 2, error occured" );
+				Log.d( Main.APP_TAG, "Moose 2, error occured" );
 			}
 		}		
 		
@@ -97,9 +97,9 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 	@Override
 	public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
 	{
-		Log.d( WordUpMain.APP_TAG, "Updating " + TABLE_WORDS );
-		Log.d( WordUpMain.APP_TAG, TABLE_WORDS+ " current verson :" + oldVersion );
-		Log.d( WordUpMain.APP_TAG, TABLE_WORDS+ " new verson :" + newVersion );
+		Log.d( Main.APP_TAG, "Updating " + TABLE_WORDS );
+		Log.d( Main.APP_TAG, TABLE_WORDS+ " current verson :" + oldVersion );
+		Log.d( Main.APP_TAG, TABLE_WORDS+ " new verson :" + newVersion );
 
 		db.execSQL( SQL_DESTROY_TABLE );
 

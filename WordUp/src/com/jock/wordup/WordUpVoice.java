@@ -3,9 +3,7 @@ package com.jock.wordup;
 import java.util.Locale;
 
 import android.content.Context;
-import android.content.Intent;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.Engine;
 import android.speech.tts.TextToSpeech.OnInitListener;
 
 public class  WordUpVoice

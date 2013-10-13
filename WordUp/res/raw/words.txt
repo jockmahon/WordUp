@@ -297,7 +297,7 @@ perfidy	betrayal of a trust
 perpetual	continuing or enduring forever; everlasting.
 perpetuates	to make perpetual.
 petulant	easily irritated or annoyed
-Philistines	a person who is uninterested in intellectual pursuits
+philistines	a person who is uninterested in intellectual pursuits
 philogyny	love of or liking for women.
 phlegmatic	not easily excited to action or display of emotion; self-possessed, calm, or composed
 phsiognomy	facial features
@@ -401,7 +401,7 @@ vociferous	crying out noisily; clamorous.
 voluptuous	full of, characterized by, or ministering to indulgence in luxury, pleasure, and sensuous enjoyment:
 votive	of the nature of or expressive of a wish or desire.
 wanton	behave extremely cruelly and brutally
-Zeitgeist	the spirit of the time; general trend of thought or feeling characteristic of a particular period of time
+zeitgeist	the spirit of the time; general trend of thought or feeling characteristic of a particular period of time
 zenith	the point on the celestial sphere vertically above a given position or observer.
 ebullition	a seething or overflowing, as of passion or feeling; outburst.
 veracity	habitual observance of truth in speech or statement; truthfulness:

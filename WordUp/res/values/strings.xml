@@ -19,4 +19,12 @@
     <string name="msg_word_correct">Yay, you got the word correct</string>
     <string name="msg_word_incorrect">D\'oh, you fucked it up, try again.</string>
 
+    <string-array name="filter_list">
+        <item>All</item>
+        <item>Untested</item>
+        <item>Correct</item>
+        <item>Incorrect</item>
+    </string-array>
+
+    
 </resources>

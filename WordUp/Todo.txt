@@ -1,11 +1,9 @@
-add drawer navigation, maybe a,b,c or dorop down also show untested only known or unknown
 uppercase the first letter of the word
-show loading of words
 make widget
 move load words to new thread 
 move delete words to new thread
 on submit move to next word if correct else show dialog showing correct word 
-change to fragments, will need to do this before drawer
+
 
 
 
@@ -13,6 +11,8 @@ change to fragments, will need to do this before drawer
 
 
 done
+change to fragments, will need to do this before drawer
+show loading of words
 add word of the day at top
 in test dont use words that have already been tested
 change speak icon, improved

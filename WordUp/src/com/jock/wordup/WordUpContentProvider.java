@@ -1,20 +1,13 @@
 package com.jock.wordup;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -72,7 +65,7 @@ public class WordUpContentProvider extends ContentProvider
 
 		int deleteCount = db.delete( WordUpSQLiteOpenHelper.TABLE_WORDS, selection, selectionArgs );
 
-		Log.i( WordUpMain.APP_TAG, deleteCount + " deleted" );
+		Log.i( Main.APP_TAG, deleteCount + " deleted" );
 
 		getContext().getContentResolver().notifyChange( uri, null );
 
@@ -85,7 +78,7 @@ public class WordUpContentProvider extends ContentProvider
 	{
 		SQLiteDatabase db = mWordUpSQLiteOpenHelper.getWritableDatabase();
 
-		Log.i( WordUpMain.APP_TAG, "on row insert" );
+		Log.i( Main.APP_TAG, "on row insert" );
 
 		long id = db.insert( WordUpSQLiteOpenHelper.TABLE_WORDS, null, cv );
 
@@ -111,7 +104,7 @@ public class WordUpContentProvider extends ContentProvider
 		int updateCount = 0;
 		updateCount = db.update( WordUpSQLiteOpenHelper.TABLE_WORDS, cv, selection, selectionArgs );
 
-		Log.i( WordUpMain.APP_TAG, "on row update, " + String.valueOf( updateCount ) + " row changed" );
+		Log.i( Main.APP_TAG, "on row update, " + String.valueOf( updateCount ) + " row changed" );
 
 		getContext().getContentResolver().notifyChange( uri, null );
 
