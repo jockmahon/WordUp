@@ -16,7 +16,7 @@ import android.util.Log;
 
 public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 {
-	public static final int DATA_BASE_VERSION = 1;
+	public static final int DATA_BASE_VERSION = 2;
 	public static final String DATA_BASE_NAME = "words.db";
 	public static final String TABLE_WORDS = "words";
 
@@ -52,6 +52,9 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 		db.execSQL( SQL_CREATE_DATA_BASE );
 		// loadWords();
 
+		
+		Log.d( Main.APP_TAG, "onCreate  WordUpSQLiteOpenHelper" );
+		
 		InputStream inputStream = resources.openRawResource( R.raw.words );
 		BufferedReader reader = new BufferedReader( new InputStreamReader( inputStream ) );
 

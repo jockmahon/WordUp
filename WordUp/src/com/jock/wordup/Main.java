@@ -3,6 +3,7 @@ package com.jock.wordup;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -67,18 +68,20 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>
 			{
 				Log.d( APP_TAG, "moose click" );
 				resetQueryArgs();
-				
+
 				if( itemId == 1 )
 				{
 					mSelection = WordUpSQLiteOpenHelper.COLUMN_WORD_TOTAL_SPLET_CNT + " = 0 ";
 				}
 				else if( itemId == 2 )
 				{
-					mSelection = WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT + " > " + WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT;
+					mSelection = WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT + " > "
+							+ WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT;
 				}
 				else if( itemId == 3 )
 				{
-					mSelection = WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT + " > " + WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT;
+					mSelection = WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT + " > "
+							+ WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT;
 				}
 				startLoader();
 				return true;
@@ -93,15 +96,21 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>
 		fragTran.commit();
 	}
 
-	
+
 	private void resetQueryArgs()
 	{
-		mProjection = null;
+		String[] columns = { WordUpSQLiteOpenHelper.COLUMN_WORD_ID,
+				"upper(" + WordUpSQLiteOpenHelper.COLUMN_WORD + ") as " + WordUpSQLiteOpenHelper.COLUMN_WORD, WordUpSQLiteOpenHelper.COLUMN_WORD_DEF,
+				WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT, WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT,
+				WordUpSQLiteOpenHelper.COLUMN_WORD_TOTAL_SPLET_CNT };
+
+		mProjection = columns;
 		mSelectionArgs = null;
 		mSelection = null;
-		mSortOrder = WordUpSQLiteOpenHelper.COLUMN_WORD + " asc";		
-		
+		mSortOrder = WordUpSQLiteOpenHelper.COLUMN_WORD + " asc";
+
 	}
+
 
 	@Override
 	protected void onResume()
@@ -233,9 +242,26 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>
 	{
 		FragmentTransaction fragTran = mFragmentManager.beginTransaction();
 
-		WordTestFragment wordList = new WordTestFragment();
-		fragTran.replace( R.id.holder, wordList );
-		fragTran.addToBackStack( "main" );
-		fragTran.commit();
+		DialogFragment newFragment = NewTestDialog.newInstance();
+		newFragment.show( fragTran, "dialog" );
+
+		// WordTestFragment wordList = new WordTestFragment();
+		// fragTran.replace( R.id.holder, wordList );
+		// fragTran.addToBackStack( "main" );
+
+		// fragTran.commit();
 	}
+
+
+	public void doPositiveClick()
+	{
+		Log.d( "FragmentAlertDialog", "Positive click!" );
+	}
+
+
+	public void doNegativeClick()
+	{
+		Log.d( "FragmentAlertDialog", "Negative click!" );
+	}
+
 }

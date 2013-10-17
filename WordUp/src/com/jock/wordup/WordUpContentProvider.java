@@ -30,12 +30,15 @@ public class WordUpContentProvider extends ContentProvider
 	private WordUpSQLiteOpenHelper mWordUpSQLiteOpenHelper;
 
 
+	
 	@Override
 	public boolean onCreate()
 	{
 		mWordUpSQLiteOpenHelper = new WordUpSQLiteOpenHelper( getContext(), WordUpSQLiteOpenHelper.DATA_BASE_NAME, null,
 				WordUpSQLiteOpenHelper.DATA_BASE_VERSION );
 
+		
+		Log.d( Main.APP_TAG, "onCreate WordUpContentProvider"  );
 		// put back in to load words
 		// loadWords();
 
@@ -101,6 +104,8 @@ public class WordUpContentProvider extends ContentProvider
 	{
 		SQLiteDatabase db = mWordUpSQLiteOpenHelper.getWritableDatabase();
 
+		Log.d( Main.APP_TAG, "on Create update"  );
+		
 		int updateCount = 0;
 		updateCount = db.update( WordUpSQLiteOpenHelper.TABLE_WORDS, cv, selection, selectionArgs );
 

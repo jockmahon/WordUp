@@ -1,9 +1,12 @@
-uppercase the first letter of the word
+upper case the first letter of the word
 make widget
 move load words to new thread 
 move delete words to new thread
 on submit move to next word if correct else show dialog showing correct word 
-
+ability to update word db with out overwriting the progress
+fix colour of action bar text colour
+on layout change all words disappear
+to different layouts for different screens / orientations 
 
 
 
