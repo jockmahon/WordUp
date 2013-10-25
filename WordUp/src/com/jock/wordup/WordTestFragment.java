@@ -1,6 +1,8 @@
 package com.jock.wordup;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 import android.app.Fragment;
@@ -17,10 +19,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 public class WordTestFragment extends Fragment implements OnClickListener
 {
+	private static Random rand;
 	private ImageButton repeatWord;
 	private Button nextWord;
 	private Button submitWord;
@@ -35,10 +38,7 @@ public class WordTestFragment extends Fragment implements OnClickListener
 	private Cursor results;
 
 	private String currentWord;
-
-	private int wordCount;
-	private Boolean[] tested;
-	private int nextWordIndex = 0;
+	private int testSize = 0;
 
 
 	@Override
@@ -60,7 +60,6 @@ public class WordTestFragment extends Fragment implements OnClickListener
 		getRandomWord();
 
 		return view;
-
 	}
 
 
@@ -68,6 +67,13 @@ public class WordTestFragment extends Fragment implements OnClickListener
 	public void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
+
+		Bundle bundle = getArguments();
+
+		// the # of words from the dialog
+		testSize = bundle.getInt( Main.TEST_SIZE );
+
+		rand = new Random();
 
 		cr = ( (Main) getActivity() ).getActivityResolver();
 		columnList = new String[] { WordUpSQLiteOpenHelper.COLUMN_WORD_ID, WordUpSQLiteOpenHelper.COLUMN_WORD,
@@ -80,50 +86,39 @@ public class WordTestFragment extends Fragment implements OnClickListener
 
 	private void setUpWordTest()
 	{
-		results = cr.query( WordUpContentProvider.CONTENT_URI, columnList, null, null, WordUpSQLiteOpenHelper.COLUMN_WORD + " desc" );
+		String ids = "";
+		int nextNum = 0;
+		int wordCount = ( (Main) getActivity() ).getWordCount();
 
-		wordCount = results.getCount();
-		nextWordIndex = 0;
-
-		tested = new Boolean[wordCount];
-
-		for(int i = 0; i < tested.length; i++)
+		// build up the ids to be used in the IN condition in the sql
+		for(int i = 0; i < testSize - 1; i++)
 		{
-			tested[i] = false;
+			nextNum = rand.nextInt( wordCount );
+			ids += "'" + String.valueOf( nextNum ) + "',";
 		}
+
+		nextNum = rand.nextInt( wordCount );
+		ids += "'" + String.valueOf( nextNum ) + "'";
+
+		Log.d( Main.APP_TAG, ids );
+
+		results = cr.query( WordUpContentProvider.CONTENT_URI, columnList, WordUpSQLiteOpenHelper.COLUMN_WORD_ID + " IN (" + ids + ")", null,
+				WordUpSQLiteOpenHelper.COLUMN_WORD + " desc" );
+
+		results.moveToPosition( 0 );
+
 	}
 
 
-	private Boolean areUntestedWords()
+	private Boolean isLastword()
 	{
-		for(int i = 0; i < tested.length; i++)
-		{
-			if( tested[i] == false )
-			{
-				return true;
-			}
-		}
-
-		return false;
+		return results.isLast();
 	}
 
 
 	private void getRandomWord()
 	{
-		int wordCount = results.getCount();
-
-		Log.d( Main.APP_TAG, String.valueOf( wordCount ) + " words" );
-
-		Random rand = new Random();
-
-		do
-		{
-			nextWordIndex = rand.nextInt( wordCount );
-
-		} while (tested[nextWordIndex] == true);
-
-		results.moveToPosition( nextWordIndex );
-
+		Log.d( Main.APP_TAG, String.valueOf( results.getCount() ) + " words" );
 		Log.d( Main.APP_TAG, "------------------------------" );
 		Log.d( Main.APP_TAG, String.valueOf( results.getString( 1 ) ) );
 		Log.d( Main.APP_TAG, String.valueOf( results.getInt( 3 ) ) + " correct attempts" );
@@ -144,6 +139,9 @@ public class WordTestFragment extends Fragment implements OnClickListener
 	}
 
 
+	int testTotalCorrect = 0;
+	int testTotalIncorrect = 0;
+	
 	@Override
 	public void onClick( View v )
 	{
@@ -166,6 +164,8 @@ public class WordTestFragment extends Fragment implements OnClickListener
 			{
 				attemptResult.setText( R.string.msg_word_correct );
 
+				testTotalCorrect++;
+				
 				int correctCnt = results.getInt( 3 );
 				correctCnt = correctCnt + 1;
 				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT, correctCnt );
@@ -173,13 +173,13 @@ public class WordTestFragment extends Fragment implements OnClickListener
 
 				cr.update( WordUpContentProvider.CONTENT_URI, cv, " " + WordUpSQLiteOpenHelper.COLUMN_WORD_ID + " = " + results.getInt( 0 ), null );
 
-				tested[nextWordIndex] = true;
-
 			}
 			else
 			{
 				attemptResult.setText( R.string.msg_word_incorrect );
 
+				testTotalIncorrect++;
+				
 				int incorrectCnt = results.getInt( 4 );
 				incorrectCnt = incorrectCnt + 1;
 				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT, incorrectCnt );
@@ -188,8 +188,6 @@ public class WordTestFragment extends Fragment implements OnClickListener
 				Log.i( Main.APP_TAG, " " + WordUpSQLiteOpenHelper.COLUMN_WORD_ID + " = " + results.getInt( 0 ) );
 
 				cr.update( WordUpContentProvider.CONTENT_URI, cv, " " + WordUpSQLiteOpenHelper.COLUMN_WORD_ID + " = " + results.getInt( 0 ), null );
-
-				tested[nextWordIndex] = true;
 			}
 
 			wordAttempt.setText( "" );
@@ -200,19 +198,23 @@ public class WordTestFragment extends Fragment implements OnClickListener
 
 	private void isFinished()
 	{
-		if( !areUntestedWords() )
+		if( isLastword() )
 		{
-			setUpWordTest();
+			Toast.makeText( getActivity(), "Finished, " + testTotalCorrect + " right. " +testTotalIncorrect + " wrong", Toast.LENGTH_SHORT ).show();
 		}
-		getRandomWord();
+		else
+		{
+			results.moveToNext();
+			getRandomWord();
+		}
 
 	}
 
 
 	private void moveToNextWord()
 	{
-		isFinished();
 		resetActivity();
+		isFinished();
 	}
 
 

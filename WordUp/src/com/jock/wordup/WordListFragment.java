@@ -4,6 +4,7 @@ import java.util.Random;
 
 import android.app.Fragment;
 import android.content.ContentResolver;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,17 +64,21 @@ public class WordListFragment extends Fragment implements OnItemClickListener
 		{
 			mWordAdapter.swapCursor( c );
 
-			int wordCount = c.getCount();
-
-			if( wordCount > 0 )
+			if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
 			{
-				Random rand = new Random();
-				int nextWordIndex = rand.nextInt( wordCount );
 
-				c.moveToPosition( nextWordIndex );
+				int wordCount = c.getCount();
 
-				tv_wordOfTheDay.setText( c.getString( 1 ) );
-				tv_wordOfTheDayDef.setText( c.getString( 2 ) );
+				if( wordCount > 0 )
+				{
+					Random rand = new Random();
+					int nextWordIndex = rand.nextInt( wordCount );
+
+					c.moveToPosition( nextWordIndex );
+
+					tv_wordOfTheDay.setText( c.getString( 1 ) );
+					tv_wordOfTheDayDef.setText( c.getString( 2 ) );
+				}
 			}
 		}
 	}

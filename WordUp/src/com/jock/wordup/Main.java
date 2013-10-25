@@ -3,7 +3,6 @@ package com.jock.wordup;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -20,10 +19,14 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
+import android.widget.Toast;
 
-public class Main extends Activity implements LoaderCallbacks<Cursor>
+import com.jock.wordup.NewTestDialog.StartTestListener;
+
+public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTestListener
 {
 	public static final String APP_TAG = "WORD_UP";
+	public static final String TEST_SIZE = "TEST_SIZE";
 	private static final int TTS_DATA_CHECK = 1;
 	private static final int CURSOR_ID = 0;
 
@@ -34,8 +37,12 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>
 	private String[] mSelectionArgs;
 	private String mSelection;
 	private String mSortOrder;
+	private ActionBar actionBar;
+	private int totalWords = 0; 
 
 	private FragmentManager mFragmentManager;
+
+	NewTestDialog newFragment;
 
 
 	@Override
@@ -57,7 +64,7 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>
 		mFragmentManager = getFragmentManager();
 		FragmentTransaction fragTran = mFragmentManager.beginTransaction();
 
-		ActionBar actionBar = getActionBar();
+		actionBar = getActionBar();
 		actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
 
 		OnNavigationListener mOnNavigationListener = new OnNavigationListener()
@@ -91,6 +98,8 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>
 		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource( this, R.array.filter_list, android.R.layout.simple_spinner_dropdown_item );
 		actionBar.setListNavigationCallbacks( mSpinnerAdapter, mOnNavigationListener );
 
+		actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
+		
 		WordListFragment wordList = new WordListFragment();
 		fragTran.add( R.id.holder, wordList );
 		fragTran.commit();
@@ -146,10 +155,17 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>
 	}
 
 
+	public int getWordCount()
+	{
+		return totalWords; 
+	}
+	
 	@Override
 	public void onLoadFinished( Loader<Cursor> loader, Cursor cursor )
 	{
 		Log.i( APP_TAG, "onLoadFinished, word cnt : " + String.valueOf( cursor.getCount() ) );
+		
+		totalWords = cursor.getCount();
 
 		WordListFragment wordList = (WordListFragment) getFragmentManager().findFragmentById( R.id.holder );
 
@@ -240,16 +256,8 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>
 
 	private void startTest()
 	{
-		FragmentTransaction fragTran = mFragmentManager.beginTransaction();
-
-		DialogFragment newFragment = NewTestDialog.newInstance();
-		newFragment.show( fragTran, "dialog" );
-
-		// WordTestFragment wordList = new WordTestFragment();
-		// fragTran.replace( R.id.holder, wordList );
-		// fragTran.addToBackStack( "main" );
-
-		// fragTran.commit();
+		newFragment = new NewTestDialog();
+		newFragment.show( mFragmentManager, "layout_new_test_dialog" );
 	}
 
 
@@ -262,6 +270,29 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>
 	public void doNegativeClick()
 	{
 		Log.d( "FragmentAlertDialog", "Negative click!" );
+	}
+
+
+	@Override
+	public void onStartTest( int testSize )
+	{
+		Log.d( APP_TAG, String.valueOf( testSize ) );
+
+		newFragment.dismiss();
+
+		Bundle args = new Bundle();
+		args.putInt( TEST_SIZE, testSize );
+
+		FragmentTransaction fragTran = mFragmentManager.beginTransaction();
+		WordTestFragment wordList = new WordTestFragment();
+		wordList.setArguments( args );
+
+		fragTran.replace( R.id.holder, wordList );
+		fragTran.addToBackStack( "main" );
+
+		actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
+		
+		fragTran.commit();
 	}
 
 }

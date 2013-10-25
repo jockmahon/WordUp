@@ -50,8 +50,6 @@ public class WordUpSQLiteOpenHelper extends SQLiteOpenHelper
 	{
 		Log.d( Main.APP_TAG, "Creating " + TABLE_WORDS );
 		db.execSQL( SQL_CREATE_DATA_BASE );
-		// loadWords();
-
 		
 		Log.d( Main.APP_TAG, "onCreate  WordUpSQLiteOpenHelper" );
 		

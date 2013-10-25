@@ -39,8 +39,6 @@ public class WordUpContentProvider extends ContentProvider
 
 		
 		Log.d( Main.APP_TAG, "onCreate WordUpContentProvider"  );
-		// put back in to load words
-		// loadWords();
 
 		return true;
 	}
