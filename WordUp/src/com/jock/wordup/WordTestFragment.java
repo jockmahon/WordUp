@@ -1,8 +1,8 @@
 package com.jock.wordup;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 import android.app.Fragment;
@@ -40,6 +40,8 @@ public class WordTestFragment extends Fragment implements OnClickListener
 	private String currentWord;
 	private int testSize = 0;
 
+	private String testWord = "";
+
 
 	@Override
 	public View onCreateView( LayoutInflater li, ViewGroup container, Bundle state )
@@ -72,6 +74,7 @@ public class WordTestFragment extends Fragment implements OnClickListener
 
 		// the # of words from the dialog
 		testSize = bundle.getInt( Main.TEST_SIZE );
+		testWord = bundle.getString( Main.TEST_WORDS );
 
 		rand = new Random();
 
@@ -86,20 +89,40 @@ public class WordTestFragment extends Fragment implements OnClickListener
 
 	private void setUpWordTest()
 	{
+
+		Cursor rowCount = cr.query( WordUpContentProvider.CONTENT_URI, columnList, testWord, null, WordUpSQLiteOpenHelper.COLUMN_WORD + " desc" );
+
 		String ids = "";
 		int nextNum = 0;
-		int wordCount = ( (Main) getActivity() ).getWordCount();
+		int wordCount = rowCount.getCount();
+
+		if( wordCount < testSize )
+		{
+			wordCount = testSize;
+		}
+
+		List<Integer> al = new ArrayList<Integer>();
+		al.contains( nextNum );
 
 		// build up the ids to be used in the IN condition in the sql
 		for(int i = 0; i < testSize - 1; i++)
 		{
-			nextNum = rand.nextInt( wordCount );
+			do
+			{
+				nextNum = rand.nextInt( wordCount );
+
+			} while (al.contains( nextNum ) == true);
+
+			al.add( nextNum );
+			
 			ids += "'" + String.valueOf( nextNum ) + "',";
 		}
 
-		nextNum = rand.nextInt( wordCount );
-		ids += "'" + String.valueOf( nextNum ) + "'";
-
+		
+		Integer[] d = new Integer[al.size()];
+		d = (Integer[])al.toArray();
+		
+		
 		Log.d( Main.APP_TAG, ids );
 
 		results = cr.query( WordUpContentProvider.CONTENT_URI, columnList, WordUpSQLiteOpenHelper.COLUMN_WORD_ID + " IN (" + ids + ")", null,
@@ -138,10 +161,10 @@ public class WordTestFragment extends Fragment implements OnClickListener
 		( (Main) getActivity() ).speakWord( currentWord );
 	}
 
-
 	int testTotalCorrect = 0;
 	int testTotalIncorrect = 0;
-	
+
+
 	@Override
 	public void onClick( View v )
 	{
@@ -165,7 +188,7 @@ public class WordTestFragment extends Fragment implements OnClickListener
 				attemptResult.setText( R.string.msg_word_correct );
 
 				testTotalCorrect++;
-				
+
 				int correctCnt = results.getInt( 3 );
 				correctCnt = correctCnt + 1;
 				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT, correctCnt );
@@ -179,7 +202,7 @@ public class WordTestFragment extends Fragment implements OnClickListener
 				attemptResult.setText( R.string.msg_word_incorrect );
 
 				testTotalIncorrect++;
-				
+
 				int incorrectCnt = results.getInt( 4 );
 				incorrectCnt = incorrectCnt + 1;
 				cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT, incorrectCnt );
@@ -200,7 +223,7 @@ public class WordTestFragment extends Fragment implements OnClickListener
 	{
 		if( isLastword() )
 		{
-			Toast.makeText( getActivity(), "Finished, " + testTotalCorrect + " right. " +testTotalIncorrect + " wrong", Toast.LENGTH_SHORT ).show();
+			Toast.makeText( getActivity(), "Finished, " + testTotalCorrect + " right. " + testTotalIncorrect + " wrong", Toast.LENGTH_SHORT ).show();
 		}
 		else
 		{

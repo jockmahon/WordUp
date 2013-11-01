@@ -18,6 +18,7 @@ public class NewTestDialog extends android.app.DialogFragment implements OnItemS
 {
 	private static EditText et_numWords;
 	private static Spinner sp_includedWords;
+	private String mSelection = "";
 
 
 	static NewTestDialog newInstance()
@@ -28,7 +29,7 @@ public class NewTestDialog extends android.app.DialogFragment implements OnItemS
 
 	public interface StartTestListener
 	{
-		void onStartTest( int testSize );
+		void onStartTest( int testSize, String selectFrom );
 	}
 
 
@@ -72,7 +73,7 @@ public class NewTestDialog extends android.app.DialogFragment implements OnItemS
 		if( v.getId() == R.id.btn_startTest)
 		{
 			StartTestListener parentActivity = (StartTestListener) getActivity();
-			parentActivity.onStartTest( Integer.valueOf( et_numWords.getText().toString() ) );
+			parentActivity.onStartTest( Integer.valueOf( et_numWords.getText().toString() ), mSelection  );
 		}
 	}
 
@@ -80,7 +81,7 @@ public class NewTestDialog extends android.app.DialogFragment implements OnItemS
 	@Override
 	public void onItemSelected( AdapterView<?> arg0, View arg1, int itemId, long arg3 )
 	{
-		String mSelection = "";
+		
 		if( itemId == 1 )
 		{
 			mSelection = WordUpSQLiteOpenHelper.COLUMN_WORD_TOTAL_SPLET_CNT + " = 0 ";

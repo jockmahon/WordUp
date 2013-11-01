@@ -1,60 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/et_wordAttempt"
-        android:layout_width="300dip"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_spell_word"
-        android:inputType="textNoSuggestions" 
-        android:textSize="26sp"/>
+        android:orientation="horizontal" >
 
-    <ImageButton
-        android:id="@+id/btn_repeatWord"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:scaleType="fitXY" 
-        android:layout_toRightOf="@id/et_wordAttempt"
-        android:contentDescription="@string/repeat"
-        android:src="@drawable/ic_action_volume_on" />
+        <EditText
+            android:id="@+id/et_wordAttempt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/hint_spell_word"
+            android:inputType="textNoSuggestions"
+            android:textSize="26sp" />
 
-    <Button
-        android:id="@+id/btn_submitWord"
-        android:layout_width="wrap_content"
+        <ImageButton
+            android:id="@+id/btn_repeatWord"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="0.2"
+            android:contentDescription="@string/repeat"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_action_volume_on" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/btn_repeatWord"
-        android:text="@string/submit" />
+        android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/btn_nextWord"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/btn_submitWord"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/submit" />
+
+        <Button
+            android:id="@+id/btn_nextWord"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/next_word" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/btn_submitWord"
-        android:text="@string/next_word" />
+        android:text="@string/definition"
+        android:paddingTop="20dp"
+        android:textSize="25sp"
+        android:textStyle="italic|bold" />
+
+    <TextView
+        android:id="@+id/tv_word_def"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:text="111"
+        android:textStyle="italic"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/tv_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btn_nextWord"
-        android:text="" />
-<!--
-    <CheckBox
-        android:id="@+id/cb_showWordDef"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_result"
-        android:text="@string/show_word_def" />
--->
-    <TextView
-        android:id="@+id/tv_word_def"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_result"
         android:paddingLeft="10dp"
+        android:paddingTop="10dp"
         android:text=""
         android:textSize="20sp" />
 
-</RelativeLayout>
+</LinearLayout>

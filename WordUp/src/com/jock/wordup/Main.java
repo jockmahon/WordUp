@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -27,6 +28,7 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTest
 {
 	public static final String APP_TAG = "WORD_UP";
 	public static final String TEST_SIZE = "TEST_SIZE";
+	public static final String TEST_WORDS = "TEST_WORDS";
 	private static final int TTS_DATA_CHECK = 1;
 	private static final int CURSOR_ID = 0;
 
@@ -38,7 +40,7 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTest
 	private String mSelection;
 	private String mSortOrder;
 	private ActionBar actionBar;
-	private int totalWords = 0; 
+	private int totalWords = 0;
 
 	private FragmentManager mFragmentManager;
 
@@ -99,7 +101,7 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTest
 		actionBar.setListNavigationCallbacks( mSpinnerAdapter, mOnNavigationListener );
 
 		actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
-		
+
 		WordListFragment wordList = new WordListFragment();
 		fragTran.add( R.id.holder, wordList );
 		fragTran.commit();
@@ -157,14 +159,15 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTest
 
 	public int getWordCount()
 	{
-		return totalWords; 
+		return totalWords;
 	}
-	
+
+
 	@Override
 	public void onLoadFinished( Loader<Cursor> loader, Cursor cursor )
 	{
 		Log.i( APP_TAG, "onLoadFinished, word cnt : " + String.valueOf( cursor.getCount() ) );
-		
+
 		totalWords = cursor.getCount();
 
 		WordListFragment wordList = (WordListFragment) getFragmentManager().findFragmentById( R.id.holder );
@@ -221,8 +224,8 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTest
 	{
 		switch (mi.getItemId())
 		{
-			case R.id.mi_delete_all:
-				deleteAllWords();
+			case R.id.mi_clear_counts:
+				clearCounts();
 				return true;
 
 			case R.id.mi_start_test:
@@ -231,6 +234,20 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTest
 			default:
 				return false;
 		}
+	}
+
+
+	private void clearCounts()
+	{
+		ContentValues cv = new ContentValues();
+		cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_CORRECTLY_SPLET_CNT, 0 );
+		cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_INCORRECTLY_SPLET_CNT, 0 );
+		cv.put( WordUpSQLiteOpenHelper.COLUMN_WORD_TOTAL_SPLET_CNT, 0 );
+
+		cr.update( WordUpContentProvider.CONTENT_URI, cv, null, null );
+
+		startLoader();
+
 	}
 
 
@@ -274,7 +291,7 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTest
 
 
 	@Override
-	public void onStartTest( int testSize )
+	public void onStartTest( int testSize, String selectFrom )
 	{
 		Log.d( APP_TAG, String.valueOf( testSize ) );
 
@@ -282,6 +299,7 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTest
 
 		Bundle args = new Bundle();
 		args.putInt( TEST_SIZE, testSize );
+		args.putString( TEST_WORDS, selectFrom );
 
 		FragmentTransaction fragTran = mFragmentManager.beginTransaction();
 		WordTestFragment wordList = new WordTestFragment();
@@ -291,7 +309,7 @@ public class Main extends Activity implements LoaderCallbacks<Cursor>, StartTest
 		fragTran.addToBackStack( "main" );
 
 		actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
-		
+
 		fragTran.commit();
 	}
 

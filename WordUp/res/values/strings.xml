@@ -10,6 +10,7 @@
     <string name="submit">Submit</string>
     <string name="repeat">Repeat</string>
     <string name="delete">Delete</string>
+    <string name="clear_counts">Clear Counts</string>
     <string name="next_word">Next Word</string>
     <string name="show_word_def">Show word Definition</string>
     <string name="show_word">Show word</string>
@@ -25,6 +26,7 @@
         <item>Correct</item>
         <item>Incorrect</item>
     </string-array>
+        <string name="definition">Definition</string>
 
     
 </resources>
